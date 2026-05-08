@@ -1,4 +1,33 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background: #f5f5f5;
+}
+
+* { box-sizing: border-box; }
+
+/* Dialog forms */
+mat-dialog-content .form {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 8px;
+  min-width: 300px;
+}
+
+mat-dialog-content .full-width { width: 100%; }
+
+mat-dialog-content .row {
+  display: flex;
+  gap: 12px;
+  .half-width { flex: 1; }
+}
+

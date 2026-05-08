@@ -112,7 +112,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           legend: { position: 'right' },
           tooltip: {
             callbacks: {
-              label: (ctx) => ` ${ctx.label}: ${Number(ctx.raw).toFixed(2)}`
+              label: (ctx) => ` ${ctx.label}: Rs. ${Number(ctx.raw).toFixed(2)}`
             }
           }
         }

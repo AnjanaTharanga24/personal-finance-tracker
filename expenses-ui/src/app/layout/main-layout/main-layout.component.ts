@@ -1,11 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
@@ -23,7 +24,12 @@ import { AuthService } from '../../core/services/auth.service';
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.scss'
 })
-export class MainLayoutComponent {
+export class MainLayoutComponent implements OnInit {
+
+  @ViewChild('sidenav') sidenav!: MatSidenav;
+
+  isHandset = false;
+  sidenavOpened = true;
 
   navItems = [
     { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
@@ -34,7 +40,30 @@ export class MainLayoutComponent {
     { label: 'Categories', icon: 'category', route: '/categories' }
   ];
 
-  constructor(public authService: AuthService) {}
+  constructor(
+    public authService: AuthService,
+    private breakpointObserver: BreakpointObserver
+  ) {}
+
+  ngOnInit(): void {
+    this.breakpointObserver.observe([Breakpoints.Handset, '(max-width: 768px)'])
+      .subscribe(result => {
+        this.isHandset = result.matches;
+        this.sidenavOpened = !result.matches;
+      });
+  }
+
+  toggleSidenav(): void {
+    this.sidenav.toggle();
+    this.sidenavOpened = this.sidenav.opened;
+  }
+
+  onNavItemClick(): void {
+    if (this.isHandset) {
+      this.sidenav.close();
+      this.sidenavOpened = false;
+    }
+  }
 
   logout(): void {
     this.authService.logout();

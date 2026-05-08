@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -24,7 +24,7 @@ import { ReportService, DashboardSummary } from '../core/services/report.service
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
-export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
+export class DashboardComponent implements OnInit, OnDestroy {
 
   @ViewChild('donutCanvas') donutCanvas!: ElementRef;
   @ViewChild('barCanvas') barCanvas!: ElementRef;
@@ -46,9 +46,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   monthControl = new FormControl<number>(new Date().getMonth() + 1);
   yearControl = new FormControl<number>(new Date().getFullYear());
 
-  private chartsReady = false;
-  private dataReady = false;
-
   constructor(private reportService: ReportService) {
     const currentYear = new Date().getFullYear();
     for (let y = currentYear; y >= currentYear - 4; y--) this.years.push(y);
@@ -58,30 +55,28 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.load();
   }
 
-  ngAfterViewInit(): void {
-    this.chartsReady = true;
-    if (this.dataReady && this.summary) this.renderCharts();
-  }
-
   ngOnDestroy(): void {
     this.donutChart?.destroy();
     this.barChart?.destroy();
   }
 
   load(): void {
+    this.donutChart?.destroy();
+    this.barChart?.destroy();
+    this.donutChart = undefined;
+    this.barChart = undefined;
+
     this.reportService.getSummary(
       this.monthControl.value!,
       this.yearControl.value!
     ).subscribe(data => {
       this.summary = data;
-      this.dataReady = true;
-      if (this.chartsReady) this.renderCharts();
+      // setTimeout lets Angular process *ngIf and render canvas elements before Chart.js runs
+      setTimeout(() => this.renderCharts(), 0);
     });
   }
 
   onFilterChange(): void {
-    this.donutChart?.destroy();
-    this.barChart?.destroy();
     this.load();
   }
 

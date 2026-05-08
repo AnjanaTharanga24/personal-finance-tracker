@@ -1,0 +1,109 @@
+<div class="page-header">
+  <h1>Budgets</h1>
+  <button mat-raised-button color="primary" (click)="openForm()">
+    <mat-icon>add</mat-icon> New Budget
+  </button>
+</div>
+
+<!-- Month/Year selector -->
+<mat-card class="filters-card">
+  <mat-card-content class="filters">
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Month</mat-label>
+      <mat-select [formControl]="monthControl" (selectionChange)="load()">
+        <mat-option *ngFor="let m of months" [value]="m.value">{{ m.label }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Year</mat-label>
+      <mat-select [formControl]="yearControl" (selectionChange)="load()">
+        <mat-option *ngFor="let y of years" [value]="y">{{ y }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </mat-card-content>
+</mat-card>
+
+<!-- Overall summary -->
+<div class="summary-row" *ngIf="budgets.length > 0">
+  <mat-card class="summary-card">
+    <mat-card-content>
+      <div class="summary-label">Total Budget</div>
+      <div class="summary-value">{{ totalBudget | number:'1.2-2' }}</div>
+    </mat-card-content>
+  </mat-card>
+  <mat-card class="summary-card spent">
+    <mat-card-content>
+      <div class="summary-label">Total Spent</div>
+      <div class="summary-value">{{ totalSpent | number:'1.2-2' }}</div>
+    </mat-card-content>
+  </mat-card>
+  <mat-card class="summary-card remaining">
+    <mat-card-content>
+      <div class="summary-label">Remaining</div>
+      <div class="summary-value">{{ (totalBudget - totalSpent) | number:'1.2-2' }}</div>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<!-- Budget cards -->
+<div class="budget-grid">
+  <mat-card *ngFor="let b of budgets" class="budget-card">
+    <div class="card-top-bar" [style.background]="b.categoryColor"></div>
+    <mat-card-content>
+
+      <div class="card-header">
+        <div class="category-info">
+          <div class="cat-icon" [style.background]="b.categoryColor">
+            <mat-icon>{{ b.categoryIcon }}</mat-icon>
+          </div>
+          <span class="cat-name">{{ b.categoryName }}</span>
+        </div>
+        <div class="card-actions">
+          <button mat-icon-button (click)="openForm(b)" matTooltip="Edit">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="delete(b)" matTooltip="Delete">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <div class="amounts">
+        <div class="amount-row">
+          <span class="label">Spent</span>
+          <span class="value spent-val">{{ b.spentAmount | number:'1.2-2' }}</span>
+        </div>
+        <div class="amount-row">
+          <span class="label">Budget</span>
+          <span class="value">{{ b.amount | number:'1.2-2' }}</span>
+        </div>
+        <div class="amount-row">
+          <span class="label">Remaining</span>
+          <span class="value" [class.negative]="b.remainingAmount < 0">
+            {{ b.remainingAmount | number:'1.2-2' }}
+          </span>
+        </div>
+      </div>
+
+      <mat-progress-bar
+        [mode]="'determinate'"
+        [value]="b.percentage > 100 ? 100 : b.percentage"
+        [color]="getProgressColor(b.percentage)"
+        class="progress-bar">
+      </mat-progress-bar>
+
+      <div class="progress-footer">
+        <span [class]="getStatusClass(b)">{{ getStatusLabel(b) }}</span>
+        <span class="percentage">{{ b.percentage }}%</span>
+      </div>
+
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<div *ngIf="budgets.length === 0" class="empty-state">
+  <mat-icon>savings</mat-icon>
+  <p>No budgets set for this month</p>
+  <button mat-raised-button color="primary" (click)="openForm()">Set a Budget</button>
+</div>

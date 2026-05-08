@@ -1,0 +1,139 @@
+<div class="reports-page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <h1>Reports</h1>
+    <div class="header-actions">
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Month</mat-label>
+        <mat-select [formControl]="monthControl" (selectionChange)="load()">
+          <mat-option *ngFor="let m of months" [value]="m.value">{{ m.label }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Year</mat-label>
+        <mat-select [formControl]="yearControl" (selectionChange)="load()">
+          <mat-option *ngFor="let y of years" [value]="y">{{ y }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button mat-stroked-button (click)="exportExpenses()" matTooltip="Download expenses as CSV">
+        <mat-icon>download</mat-icon> Expenses CSV
+      </button>
+      <button mat-stroked-button (click)="exportIncomes()" matTooltip="Download income as CSV">
+        <mat-icon>download</mat-icon> Income CSV
+      </button>
+    </div>
+  </div>
+
+  <ng-container *ngIf="report">
+
+    <!-- Summary cards -->
+    <div class="summary-row">
+      <mat-card class="summary-card">
+        <mat-card-content>
+          <mat-icon class="s-icon income-icon">trending_up</mat-icon>
+          <div>
+            <div class="s-label">Total Income</div>
+            <div class="s-value income-val">{{ report.totalIncome | number:'1.2-2' }}</div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      <mat-card class="summary-card">
+        <mat-card-content>
+          <mat-icon class="s-icon expense-icon">trending_down</mat-icon>
+          <div>
+            <div class="s-label">Total Expenses</div>
+            <div class="s-value expense-val">{{ report.totalExpenses | number:'1.2-2' }}</div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      <mat-card class="summary-card">
+        <mat-card-content>
+          <mat-icon class="s-icon savings-icon">savings</mat-icon>
+          <div>
+            <div class="s-label">Net Savings</div>
+            <div class="s-value" [class]="getSavingsClass(report.netSavings)">
+              {{ report.netSavings | number:'1.2-2' }}
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Category Breakdown -->
+    <mat-card class="section-card">
+      <mat-card-header>
+        <mat-card-title>Expense Breakdown by Category</mat-card-title>
+        <mat-card-subtitle>{{ getMonthLabel() }} {{ yearControl.value }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div *ngIf="report.categoryBreakdown.length > 0; else noCategories">
+          <div *ngFor="let row of report.categoryBreakdown" class="cat-row">
+            <div class="cat-meta">
+              <span class="cat-dot" [style.background]="row.categoryColor"></span>
+              <span class="cat-name">{{ row.categoryName }}</span>
+              <span class="cat-pct">{{ row.percentage }}%</span>
+            </div>
+            <div class="cat-bar-wrap">
+              <div class="cat-bar" [style.width]="getBarWidth(row.percentage)"
+                   [style.background]="row.categoryColor"></div>
+            </div>
+            <div class="cat-amount">{{ row.amount | number:'1.2-2' }}</div>
+          </div>
+        </div>
+        <ng-template #noCategories>
+          <div class="empty">No expenses for this month.</div>
+        </ng-template>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- 6-month Trend Table -->
+    <mat-card class="section-card">
+      <mat-card-header>
+        <mat-card-title>6-Month Trend</mat-card-title>
+        <mat-card-subtitle>Income, expenses and savings over the last 6 months</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <table mat-table [dataSource]="report.trend" class="trend-table">
+
+          <ng-container matColumnDef="month">
+            <th mat-header-cell *matHeaderCellDef>Month</th>
+            <td mat-cell *matCellDef="let row">
+              <strong>{{ row.monthLabel }}</strong>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="income">
+            <th mat-header-cell *matHeaderCellDef class="num-col">Income</th>
+            <td mat-cell *matCellDef="let row" class="num-col income-val">
+              {{ row.totalIncome | number:'1.2-2' }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="expenses">
+            <th mat-header-cell *matHeaderCellDef class="num-col">Expenses</th>
+            <td mat-cell *matCellDef="let row" class="num-col expense-val">
+              {{ row.totalExpenses | number:'1.2-2' }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="savings">
+            <th mat-header-cell *matHeaderCellDef class="num-col">Savings</th>
+            <td mat-cell *matCellDef="let row" class="num-col">
+              <span [class]="getSavingsClass(row.savings)">
+                {{ row.savings | number:'1.2-2' }}
+              </span>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="trendColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: trendColumns;"
+              [class.current-month]="row.month === monthControl.value && row.year === yearControl.value">
+          </tr>
+        </table>
+      </mat-card-content>
+    </mat-card>
+
+  </ng-container>
+
+</div>

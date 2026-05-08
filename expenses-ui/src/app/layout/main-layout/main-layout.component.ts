@@ -29,6 +29,8 @@ export class MainLayoutComponent {
     { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
     { label: 'Expenses', icon: 'receipt_long', route: '/expenses' },
     { label: 'Income', icon: 'account_balance_wallet', route: '/incomes' },
+    { label: 'Budgets', icon: 'savings', route: '/budgets' },
+    { label: 'Reports', icon: 'bar_chart', route: '/reports' },
     { label: 'Categories', icon: 'category', route: '/categories' }
   ];
 

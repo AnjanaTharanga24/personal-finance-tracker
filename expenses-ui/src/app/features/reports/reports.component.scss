@@ -1,0 +1,120 @@
+.reports-page { max-width: 1000px; }
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+
+  h1 { margin: 0; font-size: 24px; font-weight: 500; }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .filter-field { width: 140px; }
+}
+
+.summary-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.summary-card {
+  mat-card-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .s-icon {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    padding: 8px;
+
+    &.income-icon { background: #e8f5e9; color: #388e3c; }
+    &.expense-icon { background: #ffebee; color: #c62828; }
+    &.savings-icon { background: #e3f2fd; color: #1565c0; }
+  }
+
+  .s-label { font-size: 12px; color: #757575; }
+  .s-value { font-size: 20px; font-weight: 600; }
+  .income-val { color: #388e3c; }
+  .expense-val { color: #c62828; }
+}
+
+.section-card {
+  margin-bottom: 20px;
+
+  mat-card-content { padding: 16px; }
+}
+
+// Category breakdown bars
+.cat-row {
+  display: grid;
+  grid-template-columns: 200px 1fr 120px;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f5f5f5;
+
+  &:last-child { border-bottom: none; }
+}
+
+.cat-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .cat-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .cat-name { font-size: 14px; font-weight: 500; flex: 1; }
+  .cat-pct { font-size: 12px; color: #757575; min-width: 36px; text-align: right; }
+}
+
+.cat-bar-wrap {
+  height: 8px;
+  background: #f0f0f0;
+  border-radius: 4px;
+  overflow: hidden;
+
+  .cat-bar {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.4s ease;
+  }
+}
+
+.cat-amount {
+  text-align: right;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+// Trend table
+.trend-table { width: 100%; }
+.num-col { text-align: right; padding-right: 16px; }
+.income-val { color: #388e3c; font-weight: 500; }
+.expense-val { color: #c62828; font-weight: 500; }
+.positive { color: #388e3c; font-weight: 600; }
+.negative { color: #d32f2f; font-weight: 600; }
+
+.current-month { background: #f3f4ff; }
+
+.empty { padding: 32px; text-align: center; color: #9e9e9e; }
+
+@media (max-width: 700px) {
+  .summary-row { grid-template-columns: 1fr; }
+  .cat-row { grid-template-columns: 1fr auto; }
+  .cat-bar-wrap { display: none; }
+  .page-header { flex-direction: column; align-items: flex-start; }
+}

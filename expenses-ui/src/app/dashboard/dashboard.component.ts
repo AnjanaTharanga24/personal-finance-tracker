@@ -1,25 +1,175 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { AuthService } from '../core/services/auth.service';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { Chart } from 'chart.js/auto';
+import { ReportService, DashboardSummary } from '../core/services/report.service';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatIconModule],
-  template: `
-    <h1 style="margin: 0 0 24px 0; font-size: 24px; font-weight: 500;">
-      Welcome back, {{ username }}!
-    </h1>
-    <mat-card style="padding: 32px; text-align: center; color: #9e9e9e;">
-      <mat-icon style="font-size: 64px; width: 64px; height: 64px;">bar_chart</mat-icon>
-      <p style="font-size: 18px;">Dashboard charts coming in Phase 5</p>
-      <p>Use the sidebar to manage your expenses and categories.</p>
-    </mat-card>
-  `
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatCardModule,
+    MatIconModule,
+    MatSelectModule,
+    MatFormFieldModule,
+    MatProgressBarModule
+  ],
+  templateUrl: './dashboard.component.html',
+  styleUrl: './dashboard.component.scss'
 })
-export class DashboardComponent {
-  username = this.authService.getUsername();
-  constructor(private authService: AuthService) {}
+export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
+
+  @ViewChild('donutCanvas') donutCanvas!: ElementRef;
+  @ViewChild('barCanvas') barCanvas!: ElementRef;
+
+  summary: DashboardSummary | null = null;
+  private donutChart?: Chart;
+  private barChart?: Chart;
+
+  months = [
+    { value: 1, label: 'January' }, { value: 2, label: 'February' },
+    { value: 3, label: 'March' }, { value: 4, label: 'April' },
+    { value: 5, label: 'May' }, { value: 6, label: 'June' },
+    { value: 7, label: 'July' }, { value: 8, label: 'August' },
+    { value: 9, label: 'September' }, { value: 10, label: 'October' },
+    { value: 11, label: 'November' }, { value: 12, label: 'December' }
+  ];
+
+  years: number[] = [];
+  monthControl = new FormControl<number>(new Date().getMonth() + 1);
+  yearControl = new FormControl<number>(new Date().getFullYear());
+
+  private chartsReady = false;
+  private dataReady = false;
+
+  constructor(private reportService: ReportService) {
+    const currentYear = new Date().getFullYear();
+    for (let y = currentYear; y >= currentYear - 4; y--) this.years.push(y);
+  }
+
+  ngOnInit(): void {
+    this.load();
+  }
+
+  ngAfterViewInit(): void {
+    this.chartsReady = true;
+    if (this.dataReady && this.summary) this.renderCharts();
+  }
+
+  ngOnDestroy(): void {
+    this.donutChart?.destroy();
+    this.barChart?.destroy();
+  }
+
+  load(): void {
+    this.reportService.getSummary(
+      this.monthControl.value!,
+      this.yearControl.value!
+    ).subscribe(data => {
+      this.summary = data;
+      this.dataReady = true;
+      if (this.chartsReady) this.renderCharts();
+    });
+  }
+
+  onFilterChange(): void {
+    this.donutChart?.destroy();
+    this.barChart?.destroy();
+    this.load();
+  }
+
+  private renderCharts(): void {
+    if (!this.summary) return;
+    this.renderDonut();
+    this.renderBar();
+  }
+
+  private renderDonut(): void {
+    const data = this.summary!.expensesByCategory;
+    if (!data.length) return;
+
+    this.donutChart = new Chart(this.donutCanvas.nativeElement, {
+      type: 'doughnut',
+      data: {
+        labels: data.map(d => d.categoryName),
+        datasets: [{
+          data: data.map(d => d.total),
+          backgroundColor: data.map(d => d.categoryColor),
+          borderWidth: 2,
+          borderColor: '#fff'
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'right' },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => ` ${ctx.label}: ${Number(ctx.raw).toFixed(2)}`
+            }
+          }
+        }
+      }
+    });
+  }
+
+  private renderBar(): void {
+    const trend = this.summary!.monthlyTrend;
+    const labels = trend.map(d => this.months[d.month - 1].label.substring(0, 3) + ' ' + d.year);
+
+    this.barChart = new Chart(this.barCanvas.nativeElement, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Income',
+            data: trend.map(d => d.totalIncome),
+            backgroundColor: 'rgba(102, 187, 106, 0.8)',
+            borderColor: '#388e3c',
+            borderWidth: 1,
+            borderRadius: 4
+          },
+          {
+            label: 'Expenses',
+            data: trend.map(d => d.totalExpenses),
+            backgroundColor: 'rgba(239, 83, 80, 0.8)',
+            borderColor: '#c62828',
+            borderWidth: 1,
+            borderRadius: 4
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'top' }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: (val) => Number(val).toFixed(0)
+            }
+          }
+        }
+      }
+    });
+  }
+
+  getMonthName(month: number): string {
+    return this.months[month - 1]?.label ?? '';
+  }
+
+  getSavingsClass(): string {
+    if (!this.summary) return '';
+    return this.summary.netSavings >= 0 ? 'positive' : 'negative';
+  }
 }

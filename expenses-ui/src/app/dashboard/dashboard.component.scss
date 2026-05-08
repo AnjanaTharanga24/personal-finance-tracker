@@ -1,0 +1,148 @@
+.dashboard {
+  max-width: 1200px;
+}
+
+.dash-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+
+  h1 { margin: 0; font-size: 24px; font-weight: 500; }
+
+  .filters {
+    display: flex;
+    gap: 12px;
+  }
+
+  .filter-field { width: 140px; }
+}
+
+// Summary cards
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.summary-card {
+  mat-card-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .card-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    mat-icon { font-size: 28px; width: 28px; height: 28px; color: white; }
+  }
+
+  .card-label { font-size: 13px; color: #757575; margin-bottom: 4px; }
+  .card-value { font-size: 20px; font-weight: 600; }
+
+  &.income-card .card-icon { background: linear-gradient(135deg, #66bb6a, #388e3c); }
+  &.expense-card .card-icon { background: linear-gradient(135deg, #ef5350, #c62828); }
+  &.savings-card .card-icon { background: linear-gradient(135deg, #42a5f5, #1565c0); }
+  &.budget-card .card-icon { background: linear-gradient(135deg, #ab47bc, #6a1b9a); }
+}
+
+.positive { color: #388e3c; }
+.negative { color: #d32f2f; }
+
+.over-badge {
+  display: inline-block;
+  background: #ffebee;
+  color: #c62828;
+  border-radius: 8px;
+  padding: 1px 8px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-left: 8px;
+}
+
+// Charts
+.charts-row {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.chart-card {
+  mat-card-content { padding: 16px; }
+}
+
+.empty-chart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+  color: #bdbdbd;
+
+  mat-icon { font-size: 48px; width: 48px; height: 48px; margin-bottom: 8px; }
+  p { font-size: 14px; }
+}
+
+// Recent expenses
+.recent-card {
+  mat-card-content { padding: 0 16px 16px; }
+}
+
+.recent-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f5f5f5;
+
+  &:last-child { border-bottom: none; }
+}
+
+.recent-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .cat-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .recent-info {
+    display: flex;
+    flex-direction: column;
+
+    .recent-title { font-size: 14px; font-weight: 500; }
+    .recent-cat { font-size: 12px; color: #9e9e9e; }
+  }
+}
+
+.recent-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
+  .recent-amount { font-size: 15px; font-weight: 600; }
+  .recent-date { font-size: 12px; color: #9e9e9e; }
+}
+
+// Responsive
+@media (max-width: 900px) {
+  .summary-cards { grid-template-columns: repeat(2, 1fr); }
+  .charts-row { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 500px) {
+  .summary-cards { grid-template-columns: 1fr; }
+  .dash-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+}

@@ -1,0 +1,31 @@
+<div class="page-header">
+  <h1>Categories</h1>
+  <button mat-raised-button color="primary" (click)="openForm()">
+    <mat-icon>add</mat-icon> New Category
+  </button>
+</div>
+
+<div class="categories-grid">
+  <mat-card *ngFor="let cat of categories" class="category-card">
+    <div class="card-color-bar" [style.background]="cat.color"></div>
+    <mat-card-content class="card-body">
+      <div class="cat-icon" [style.background]="cat.color">
+        <mat-icon>{{ cat.icon }}</mat-icon>
+      </div>
+      <div class="cat-name">{{ cat.name }}</div>
+      <div class="card-actions">
+        <button mat-icon-button (click)="openForm(cat)" matTooltip="Edit">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="delete(cat)" matTooltip="Delete">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<div *ngIf="categories.length === 0" class="empty-state">
+  <mat-icon>category</mat-icon>
+  <p>No categories yet</p>
+</div>

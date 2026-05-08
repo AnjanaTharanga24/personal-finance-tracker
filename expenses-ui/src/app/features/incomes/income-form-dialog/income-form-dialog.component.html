@@ -1,0 +1,44 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Edit Income' : 'New Income' }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="form">
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Source</mat-label>
+      <input matInput formControlName="source" placeholder="e.g. Salary, Freelance" />
+      <mat-icon matSuffix>work</mat-icon>
+      <mat-error *ngIf="form.get('source')?.hasError('required')">Source is required</mat-error>
+    </mat-form-field>
+
+    <div class="row">
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Amount</mat-label>
+        <input matInput type="number" formControlName="amount" min="0.01" step="0.01" />
+        <mat-icon matPrefix>attach_money</mat-icon>
+        <mat-error *ngIf="form.get('amount')?.hasError('required')">Amount is required</mat-error>
+        <mat-error *ngIf="form.get('amount')?.hasError('min')">Must be greater than 0</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Date</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="date" />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-error *ngIf="form.get('date')?.hasError('required')">Date is required</mat-error>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Notes (optional)</mat-label>
+      <textarea matInput formControlName="notes" rows="2"></textarea>
+    </mat-form-field>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="save()" [disabled]="form.invalid">
+    {{ isEdit ? 'Update' : 'Add' }}
+  </button>
+</mat-dialog-actions>

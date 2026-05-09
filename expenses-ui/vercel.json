@@ -1,0 +1,7 @@
+{
+  "outputDirectory": "dist/expenses-ui/browser",
+  "buildCommand": "ng build --configuration=production",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

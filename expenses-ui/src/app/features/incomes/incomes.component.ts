@@ -94,8 +94,11 @@ export class IncomesComponent implements OnInit {
           this.load();
         });
       } else {
-        this.incomeService.create(result).subscribe(() => {
+        this.incomeService.create(result).subscribe(created => {
           this.snackBar.open('Income added', 'Close', { duration: 3000 });
+          const d = new Date(created.date);
+          this.monthControl.setValue(d.getMonth() + 1);
+          this.yearControl.setValue(d.getFullYear());
           this.load();
         });
       }

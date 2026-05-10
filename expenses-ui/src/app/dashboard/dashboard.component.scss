@@ -77,7 +77,14 @@
 }
 
 .chart-card {
-  mat-card-content { padding: 16px; }
+  mat-card-content {
+    padding: 16px;
+
+    .chart-wrapper {
+      position: relative;
+      height: 300px;
+    }
+  }
 }
 
 .empty-chart {

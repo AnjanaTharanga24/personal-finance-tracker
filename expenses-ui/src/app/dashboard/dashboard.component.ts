@@ -103,6 +103,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           legend: { position: 'right' },
           tooltip: {
@@ -144,6 +145,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           legend: { position: 'top' }
         },

@@ -82,7 +82,7 @@
           <mat-card-subtitle>{{ getMonthName(monthControl.value!) }} {{ yearControl.value }}</mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
-          <div *ngIf="summary.expensesByCategory.length > 0; else noExpenses">
+          <div *ngIf="summary.expensesByCategory.length > 0; else noExpenses" class="chart-wrapper">
             <canvas #donutCanvas></canvas>
           </div>
           <ng-template #noExpenses>
@@ -100,7 +100,9 @@
           <mat-card-subtitle>Last 6 months</mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
-          <canvas #barCanvas></canvas>
+          <div class="chart-wrapper">
+            <canvas #barCanvas></canvas>
+          </div>
         </mat-card-content>
       </mat-card>
 

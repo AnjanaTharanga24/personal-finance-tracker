@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -46,7 +46,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   monthControl = new FormControl<number>(new Date().getMonth() + 1);
   yearControl = new FormControl<number>(new Date().getFullYear());
 
-  constructor(private reportService: ReportService) {
+  constructor(private reportService: ReportService, private cdr: ChangeDetectorRef) {
     const currentYear = new Date().getFullYear();
     for (let y = currentYear; y >= currentYear - 4; y--) this.years.push(y);
   }
@@ -71,8 +71,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.yearControl.value!
     ).subscribe(data => {
       this.summary = data;
-      // setTimeout lets Angular process *ngIf and render canvas elements before Chart.js runs
-      setTimeout(() => this.renderCharts(), 0);
+      this.cdr.detectChanges();
+      this.renderCharts();
     });
   }
 
